@@ -13,9 +13,22 @@ function gameBoard() {
 
   const getBoard = () => squares;
 
+  let placingSuccess = 0;
+
+  const getPlacingSuccess = () => placingSuccess;
+  const resetPlacingSuccess = () => (placingSuccess = 0);
+
   const placeMarker = (row, col, player) => {
-    if (squares[row][col].getValue() === 0) {
+    let targetSquare = squares[row][col].getValue();
+    if (targetSquare === 0) {
       squares[row][col].addMarker(player);
+      placingSuccess = 1;
+    }
+    if (targetSquare === player) {
+      console.log("You already placed a token there, try again!");
+    }
+    if (targetSquare != 0 && targetSquare != player) {
+      console.log("Your opponent already took that square, try again!");
     }
   };
 
@@ -26,7 +39,20 @@ function gameBoard() {
     console.log(boardWithCellValues);
   };
 
-  return { getBoard, placeMarker, printBoard };
+  const checkBoard = (player) => {
+    if (squares[0][0].getValue() === player) {
+      console.log("checkBoard worked!");
+    }
+  };
+
+  return {
+    getBoard,
+    placeMarker,
+    printBoard,
+    checkBoard,
+    getPlacingSuccess,
+    resetPlacingSuccess,
+  };
 }
 
 function Cell() {
@@ -81,10 +107,14 @@ function GameController(
 
     /*  This is where we would check for a winner and handle that logic,
           such as a win message. */
+    board.checkBoard(getActivePlayer().marker);
 
     // Switch player turn
-    switchPlayerTurn();
-    printNewRound();
+    if (board.getPlacingSuccess() === 1) {
+      switchPlayerTurn();
+      printNewRound();
+      board.resetPlacingSuccess();
+    }
   };
 
   printNewRound();
