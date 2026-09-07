@@ -13,16 +13,16 @@ function gameBoard() {
 
   const getBoard = () => squares;
 
-  let placingSuccess = 0;
+  let boardState = 0;
 
-  const getPlacingSuccess = () => placingSuccess;
-  const resetPlacingSuccess = () => (placingSuccess = 0);
+  const getBoardState = () => boardState;
+  const changeBoardState = (state) => (boardState = state);
 
   const placeMarker = (row, col, player) => {
     let targetSquare = squares[row][col].getValue();
     if (targetSquare === 0) {
       squares[row][col].addMarker(player);
-      placingSuccess = 1;
+      boardState = 1;
     }
     if (targetSquare === player) {
       console.log("You already placed a token there, try again!");
@@ -40,8 +40,45 @@ function gameBoard() {
   };
 
   const checkBoard = (player) => {
-    if (squares[0][0].getValue() === player) {
-      console.log("checkBoard worked!");
+    if (
+      (squares[0][0].getValue() === player &&
+        squares[0][1].getValue() === player &&
+        squares[0][2].getValue() === player) ||
+      (squares[1][0].getValue() === player &&
+        squares[1][1].getValue() === player &&
+        squares[1][2].getValue() === player) ||
+      (squares[2][0].getValue() === player &&
+        squares[2][1].getValue() === player &&
+        squares[2][2].getValue() === player) ||
+      (squares[0][0].getValue() === player &&
+        squares[1][0].getValue() === player &&
+        squares[2][0].getValue() === player) ||
+      (squares[0][1].getValue() === player &&
+        squares[1][1].getValue() === player &&
+        squares[2][1].getValue() === player) ||
+      (squares[0][2].getValue() === player &&
+        squares[1][2].getValue() === player &&
+        squares[2][2].getValue() === player) ||
+      (squares[0][0].getValue() === player &&
+        squares[1][1].getValue() === player &&
+        squares[2][2].getValue() === player) ||
+      (squares[0][2].getValue() === player &&
+        squares[1][1].getValue() === player &&
+        squares[2][0].getValue() === player)
+    ) {
+      boardState = 2;
+    } else if (
+      squares[0][0].getValue() != 0 &&
+      squares[0][1].getValue() != 0 &&
+      squares[0][2].getValue() != 0 &&
+      squares[1][0].getValue() != 0 &&
+      squares[1][1].getValue() != 0 &&
+      squares[1][2].getValue() != 0 &&
+      squares[2][0].getValue() != 0 &&
+      squares[2][1].getValue() != 0 &&
+      squares[2][2].getValue() != 0
+    ) {
+      boardState = 3;
     }
   };
 
@@ -50,8 +87,8 @@ function gameBoard() {
     placeMarker,
     printBoard,
     checkBoard,
-    getPlacingSuccess,
-    resetPlacingSuccess,
+    getBoardState,
+    changeBoardState,
   };
 }
 
@@ -100,6 +137,21 @@ function GameController(
     console.log(`${getActivePlayer().name}'s turn.`);
   };
 
+  const printCurrentRound = () => {
+    board.printBoard();
+    console.log(`Still ${getActivePlayer().name}'s turn.`);
+  };
+
+  const printGameFinishedWin = () => {
+    board.printBoard();
+    console.log(`${getActivePlayer().name} won!`);
+  };
+
+  const printGameFinishedTie = () => {
+    board.printBoard();
+    console.log("Tie!");
+  };
+
   const playRound = (row, col) => {
     // Drop a token for the current player
     console.log(`Placing ${getActivePlayer().name}'s marker on board...`);
@@ -110,10 +162,16 @@ function GameController(
     board.checkBoard(getActivePlayer().marker);
 
     // Switch player turn
-    if (board.getPlacingSuccess() === 1) {
+    if (board.getBoardState() === 1) {
       switchPlayerTurn();
       printNewRound();
-      board.resetPlacingSuccess();
+      board.changeBoardState(0);
+    } else if (board.getBoardState() === 2) {
+      printGameFinishedWin();
+    } else if (board.getBoardState() === 3) {
+      printGameFinishedTie();
+    } else {
+      printCurrentRound();
     }
   };
 
