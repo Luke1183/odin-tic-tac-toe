@@ -8,6 +8,41 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <p>Helllooooo</p>
+    <h1>Tic Tac Toe</h1>
+    <div id="main-container">
+        <dialog id="input-names">
+            <form method="dialog">
+                <div>
+                    <label class="form_text_label" for="player_one_name">Player One:</label>
+                    <input type="text" id="player_one_name" placeholder="Enter Player One's name" name="player_one_name">
+                </div>
+                <div>
+                    <label class="form_text_label" for="player_two_name">Player Two:</label>
+                    <input type="text" id="player_two_name" placeholder="Enter Player Two's name" name="player_two_name">
+                </div>
+                <div id="form_buttons_section">
+                    <button id="confirm-book" type="submit" value="confirm">Save</button>
+                    <button id="cancel-book" type="submit" value="cancel">Cancel</button>
+                </div>
+            </form>
+        </dialog>
+        <div id="new-game">
+            <button id="new-game">New game</button>
+        </div>
+        <div>
+            <div id="game-board">
+                <div id="cell00" class="board-square">aa</div>
+                <div id="cell01" class="board-square">aa</div>
+                <div id="cell02" class="board-square">aa</div>
+                <div id="cell10" class="board-square">aa</div>
+                <div id="cell11" class="board-square">aa</div>
+                <div id="cell12" class="board-square">aa</div>
+                <div id="cell20" class="board-square">aa</div>
+                <div id="cell21" class="board-square">aa</div>
+                <div id="cell22" class="board-square">aa</div>
+            </div>
+            <div id="game-results"></div>
+        </div>
+    </div>
 </body>
 </html>

@@ -184,3 +184,56 @@ function GameController(
 }
 
 const game = GameController();
+
+const DOMboard = document.querySelector("#game-board");
+
+function DisplayController() {
+  const cell00 = document.querySelector("#cell00");
+  const cell01 = document.querySelector("#cell01");
+  const cell02 = document.querySelector("#cell02");
+  const cell10 = document.querySelector("#cell10");
+  const cell11 = document.querySelector("#cell11");
+  const cell12 = document.querySelector("#cell12");
+  const cell20 = document.querySelector("#cell20");
+  const cell21 = document.querySelector("#cell21");
+  const cell22 = document.querySelector("#cell22");
+
+  cell00.addEventListener("click", () => {
+    cell00.textContent = game.getActivePlayer().marker;
+    game.playRound(0, 0);
+  });
+  cell01.addEventListener("click", () => {
+    cell01.textContent = game.getActivePlayer().marker;
+    game.playRound(0, 1);
+  });
+  cell02.addEventListener("click", () => {
+    cell02.textContent = game.getActivePlayer().marker;
+    game.playRound(0, 2);
+  });
+  cell10.addEventListener("click", () => {
+    cell10.textContent = game.getActivePlayer().marker;
+    game.playRound(1, 0);
+  });
+  cell11.addEventListener("click", () => {
+    cell11.textContent = game.getActivePlayer().marker;
+    game.playRound(1, 1);
+  });
+  cell12.addEventListener("click", () => {
+    cell12.textContent = game.getActivePlayer().marker;
+    game.playRound(1, 2);
+  });
+  cell20.addEventListener("click", () => {
+    cell20.textContent = game.getActivePlayer().marker;
+    game.playRound(2, 0);
+  });
+  cell21.addEventListener("click", () => {
+    cell21.textContent = game.getActivePlayer().marker;
+    game.playRound(2, 1);
+  });
+  cell22.addEventListener("click", () => {
+    cell22.textContent = game.getActivePlayer().marker;
+    game.playRound(2, 2);
+  });
+}
+
+const displayController = DisplayController();
