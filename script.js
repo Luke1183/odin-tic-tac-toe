@@ -13,30 +13,34 @@ function gameBoard() {
 
   const getBoard = () => squares;
 
+  // Board states:
+  // 0 -> a player can place a token (game state NOT finished)
+  // 1 -> a player has successfully placed a token (game state UNKNOWN)
+  // 2 -> a player has won the game (game state finished)
+  // 3 -> neither player has won the game (game state finished)
+  // 4 -> a player has unsuccessfully placed a token in a square they already occupy
+  // 5 -> a player has unsuccessfully placed a token in a square their opponent already occupies
+
   let boardState = 0;
 
   const getBoardState = () => boardState;
   const changeBoardState = (state) => (boardState = state);
 
   const placeMarker = (row, col, player) => {
-    let targetSquare = squares[row][col].getValue();
-    if (targetSquare === 0) {
-      squares[row][col].addMarker(player);
-      boardState = 1;
-    }
-    if (targetSquare === player) {
-      console.log("You already placed a token there, try again!");
-    }
-    if (targetSquare != 0 && targetSquare != player) {
-      console.log("Your opponent already took that square, try again!");
-    }
-  };
-
-  const printBoard = () => {
-    const boardWithCellValues = squares.map((row) =>
-      row.map((cell) => cell.getValue()),
-    );
-    console.log(boardWithCellValues);
+    squares[row][col].addMarker(player);
+    // let targetSquare = squares[row][col].getValue();
+    // if (targetSquare === 0) {
+    //   squares[row][col].addMarker(player);
+    //   boardState = 1;
+    // }
+    // if (targetSquare === player) {
+    //   boardState = 4;
+    //   // console.log("You already placed a token there, try again!");
+    // }
+    // if (targetSquare != 0 && targetSquare != player) {
+    //   boardState = 5;
+    //   // console.log("Your opponent already took that square, try again!");
+    // }
   };
 
   const checkBoard = (player) => {
@@ -85,7 +89,6 @@ function gameBoard() {
   return {
     getBoard,
     placeMarker,
-    printBoard,
     checkBoard,
     getBoardState,
     changeBoardState,
@@ -132,29 +135,9 @@ function GameController(
 
   const getActivePlayer = () => activePlayer;
 
-  const printNewRound = () => {
-    board.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
-  const printCurrentRound = () => {
-    board.printBoard();
-    console.log(`Still ${getActivePlayer().name}'s turn.`);
-  };
-
-  const printGameFinishedWin = () => {
-    board.printBoard();
-    console.log(`${getActivePlayer().name} won!`);
-  };
-
-  const printGameFinishedTie = () => {
-    board.printBoard();
-    console.log("Tie!");
-  };
-
   const playRound = (row, col) => {
     // Drop a token for the current player
-    console.log(`Placing ${getActivePlayer().name}'s marker on board...`);
+    // console.og(`Placing ${getActivePlayer().name}'s marker on board...`);
     board.placeMarker(row, col, getActivePlayer().marker);
 
     /*  This is where we would check for a winner and handle that logic,
@@ -164,18 +147,9 @@ function GameController(
     // Switch player turn
     if (board.getBoardState() === 1) {
       switchPlayerTurn();
-      printNewRound();
       board.changeBoardState(0);
-    } else if (board.getBoardState() === 2) {
-      printGameFinishedWin();
-    } else if (board.getBoardState() === 3) {
-      printGameFinishedTie();
-    } else {
-      printCurrentRound();
     }
   };
-
-  printNewRound();
 
   return {
     playRound,
@@ -184,8 +158,6 @@ function GameController(
 }
 
 const game = GameController();
-
-const DOMboard = document.querySelector("#game-board");
 
 function DisplayController() {
   const cell00 = document.querySelector("#cell00");
@@ -198,42 +170,131 @@ function DisplayController() {
   const cell21 = document.querySelector("#cell21");
   const cell22 = document.querySelector("#cell22");
 
+  const DOMboard = document.querySelector("#game-board");
+
+  const messageBoard = document.querySelector("#game-results");
+
+  DOMboard.addEventListener("click", () => {
+    if (board.getBoardState() === 0) {
+      messageBoard.textContent = "Place a token.";
+    }
+    if (board.getBoardState() === 1) {
+      messageBoard.textContent = `Player ${game.getActivePlayer().marker}'s turn.`;
+    }
+    if (board.getBoardState() === 2) {
+      messageBoard.textContent = `Player ${game.getActivePlayer().marker} won!`;
+    }
+    if (board.getBoardState() === 3) {
+      messageBoard.textContent = "Draw!";
+    }
+    if (board.getBoardState() === 4) {
+      messageBoard.textContent = "Your opponent already placed a token here.";
+    }
+    if (board.getBoardState() === 5) {
+      messageBoard.textContent = "You already placed a token here.";
+    }
+  });
+
   cell00.addEventListener("click", () => {
-    cell00.textContent = game.getActivePlayer().marker;
-    game.playRound(0, 0);
+    if (cell00.textContent === "") {
+      cell00.textContent = game.getActivePlayer().marker;
+      game.playRound(0, 0);
+      board.changeBoardState(1);
+    } else if (cell00.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell01.addEventListener("click", () => {
-    cell01.textContent = game.getActivePlayer().marker;
-    game.playRound(0, 1);
+    if (cell01.textContent === "") {
+      cell01.textContent = game.getActivePlayer().marker;
+      game.playRound(0, 1);
+      board.changeBoardState(1);
+    } else if (cell01.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell02.addEventListener("click", () => {
-    cell02.textContent = game.getActivePlayer().marker;
-    game.playRound(0, 2);
+    if (cell02.textContent === "") {
+      cell02.textContent = game.getActivePlayer().marker;
+      game.playRound(0, 2);
+      board.changeBoardState(1);
+    } else if (cell02.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell10.addEventListener("click", () => {
-    cell10.textContent = game.getActivePlayer().marker;
-    game.playRound(1, 0);
+    if (cell10.textContent === "") {
+      cell10.textContent = game.getActivePlayer().marker;
+      game.playRound(1, 0);
+      board.changeBoardState(1);
+    } else if (cell10.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell11.addEventListener("click", () => {
-    cell11.textContent = game.getActivePlayer().marker;
-    game.playRound(1, 1);
+    if (cell11.textContent === "") {
+      cell11.textContent = game.getActivePlayer().marker;
+      game.playRound(1, 1);
+      board.changeBoardState(1);
+    } else if (cell11.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell12.addEventListener("click", () => {
-    cell12.textContent = game.getActivePlayer().marker;
-    game.playRound(1, 2);
+    if (cell12.textContent === "") {
+      cell12.textContent = game.getActivePlayer().marker;
+      game.playRound(1, 2);
+      board.changeBoardState(1);
+    } else if (cell12.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell20.addEventListener("click", () => {
-    cell20.textContent = game.getActivePlayer().marker;
-    game.playRound(2, 0);
+    if (cell20.textContent === "") {
+      cell20.textContent = game.getActivePlayer().marker;
+      game.playRound(2, 0);
+      board.changeBoardState(1);
+    } else if (cell20.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell21.addEventListener("click", () => {
-    cell21.textContent = game.getActivePlayer().marker;
-    game.playRound(2, 1);
+    if (cell21.textContent === "") {
+      cell21.textContent = game.getActivePlayer().marker;
+      game.playRound(2, 1);
+      board.changeBoardState(1);
+    } else if (cell21.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
   cell22.addEventListener("click", () => {
-    cell22.textContent = game.getActivePlayer().marker;
-    game.playRound(2, 2);
+    if (cell22.textContent === "") {
+      cell22.textContent = game.getActivePlayer().marker;
+      game.playRound(2, 2);
+      board.changeBoardState(1);
+    } else if (cell22.textContent === game.getActivePlayer().marker) {
+      board.changeBoardState(4);
+    } else {
+      board.changeBoardState(5);
+    }
   });
 }
 
+const board = gameBoard();
 const displayController = DisplayController();
